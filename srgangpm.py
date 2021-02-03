@@ -23,11 +23,18 @@ import torch.nn.functional as F
 import torch
 
 
-def main():
+def main(opt):
 
     cuda = torch.cuda.is_available()
 
     hr_shape = (opt.hr_height, opt.hr_width)
+    hr_shape = (opt.hr_height, opt.hr_width)
+    dataloader = DataLoader(
+        ImageDataset("data/%s" % opt.dataset_name, hr_shape=hr_shape),
+        batch_size=opt.batch_size,
+        shuffle=True,
+        num_workers=opt.n_cpu,
+    )
 
     # Initialize generator and discriminator
     generator = GeneratorResNet()
@@ -68,7 +75,6 @@ def main():
 
     for epoch in range(opt.epoch, opt.n_epochs):
         for i, imgs in enumerate(dataloader):
-
             # Configure model input
             imgs_lr = Variable(imgs["lr"].type(Tensor))
             imgs_hr = Variable(imgs["hr"].type(Tensor))
@@ -181,21 +187,11 @@ def defineparm():
                         help="interval between saving image samples")
     parser.add_argument("--checkpoint_interval", type=int,
                         default=-1, help="interval between model checkpoints")
-    opt = parser.parse_args()
-    print(opt)
-
-
-def dataload():
-    dataloader = DataLoader(
-        ImageDataset("data/%s" % opt.dataset_name, hr_shape=hr_shape),
-        batch_size=opt.batch_size,
-        shuffle=True,
-        num_workers=opt.n_cpu,
-    )
+    print(parser)
+    return parser.parse_args()
 
 
 if __name__ == '__main__':
-    defineparm()
     makedir()
-    dataload()
-    main()
+    opt = defineparm()
+    main(opt)
