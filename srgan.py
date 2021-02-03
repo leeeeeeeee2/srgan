@@ -34,11 +34,11 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--epoch", type=int, default=0,
                         help="epoch to start training from")
-    parser.add_argument("--n_epochs", type=int, default=200,
+    parser.add_argument("--n_epochs", type=int, default=300,
                         help="number of epochs of training")
     parser.add_argument("--dataset_name", type=str,
                         default="img_align_celeba", help="name of the dataset")
-    parser.add_argument("--batch_size", type=int, default=4,
+    parser.add_argument("--batch_size", type=int, default=1,
                         help="size of the batches")
     parser.add_argument("--lr", type=float, default=0.0002,
                         help="adam: learning rate")
@@ -48,7 +48,7 @@ def main():
                         help="adam: decay of first order momentum of gradient")
     parser.add_argument("--decay_epoch", type=int, default=100,
                         help="epoch from which to start lr decay")
-    parser.add_argument("--n_cpu", type=int, default=1,
+    parser.add_argument("--n_cpu", type=int, default=6,
                         help="number of cpu threads to use during batch generation")
     parser.add_argument("--hr_height", type=int, default=256,
                         help="high res. image height")
