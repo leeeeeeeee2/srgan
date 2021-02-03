@@ -4,3 +4,4 @@ saved_models/
 __pycache__/
 .vscode/
 __pycache__/datasets.cpython-38.pyc
+.vscode/settings.json

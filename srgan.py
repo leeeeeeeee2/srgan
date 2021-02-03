@@ -47,7 +47,7 @@ parser.add_argument("--b2", type=float, default=0.999,
                     help="adam: decay of first order momentum of gradient")
 parser.add_argument("--decay_epoch", type=int, default=100,
                     help="epoch from which to start lr decay")
-parser.add_argument("--n_cpu", type=int, default=8,
+parser.add_argument("--n_cpu", type=int, default=10,
                     help="number of cpu threads to use during batch generation")
 parser.add_argument("--hr_height", type=int, default=256,
                     help="high res. image height")
@@ -100,7 +100,7 @@ optimizer_D = torch.optim.Adam(
 Tensor = torch.cuda.FloatTensor if cuda else torch.Tensor
 
 dataloader = DataLoader(
-    ImageDataset("../../data/%s" % opt.dataset_name, hr_shape=hr_shape),
+    ImageDataset("data/%s" % opt.dataset_name, hr_shape=hr_shape),
     batch_size=opt.batch_size,
     shuffle=True,
     num_workers=opt.n_cpu,
