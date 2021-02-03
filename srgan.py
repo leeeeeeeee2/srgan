@@ -38,7 +38,7 @@ def main():
                         help="number of epochs of training")
     parser.add_argument("--dataset_name", type=str,
                         default="img_align_celeba", help="name of the dataset")
-    parser.add_argument("--batch_size", type=int, default=1,
+    parser.add_argument("--batch_size", type=int, default=2,
                         help="size of the batches")
     parser.add_argument("--lr", type=float, default=0.0002,
                         help="adam: learning rate")
