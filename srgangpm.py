@@ -1,11 +1,6 @@
 """
-Super-resolution of CelebA using Generative Adversarial Networks.
-The dataset can be downloaded from: https://www.dropbox.com/sh/8oqt9vytwxb3s4r/AADIKlz8PR9zr6Y20qbkunrba/Img/img_align_celeba.zip?dl=0
-(if not available there see if options are listed at http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html)
-Instrustion on running the script:
-1. Download the dataset from the provided link
-2. Save the folder 'img_align_celeba' to '../../data/'
-4. Run the sript using command 'python3 srgan.py'
+Super-resolution of GPM using Generative Adversarial Networks.
+From https://github.com/eriklindernoren/PyTorch-GAN
 """
 import argparse
 import os
@@ -27,41 +22,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch
 
-def main():
-    os.makedirs("images", exist_ok=True)
-    os.makedirs("saved_models", exist_ok=True)
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--epoch", type=int, default=0,
-                        help="epoch to start training from")
-    parser.add_argument("--n_epochs", type=int, default=300,
-                        help="number of epochs of training")
-    parser.add_argument("--dataset_name", type=str,
-                        default="img_align_celeba", help="name of the dataset")
-    parser.add_argument("--batch_size", type=int, default=2,
-                        help="size of the batches")
-    parser.add_argument("--lr", type=float, default=0.0002,
-                        help="adam: learning rate")
-    parser.add_argument("--b1", type=float, default=0.5,
-                        help="adam: decay of first order momentum of gradient")
-    parser.add_argument("--b2", type=float, default=0.999,
-                        help="adam: decay of first order momentum of gradient")
-    parser.add_argument("--decay_epoch", type=int, default=100,
-                        help="epoch from which to start lr decay")
-    parser.add_argument("--n_cpu", type=int, default=6,
-                        help="number of cpu threads to use during batch generation")
-    parser.add_argument("--hr_height", type=int, default=256,
-                        help="high res. image height")
-    parser.add_argument("--hr_width", type=int, default=256,
-                        help="high res. image width")
-    parser.add_argument("--channels", type=int, default=3,
-                        help="number of image channels")
-    parser.add_argument("--sample_interval", type=int, default=100,
-                        help="interval between saving image samples")
-    parser.add_argument("--checkpoint_interval", type=int,
-                        default=-1, help="interval between model checkpoints")
-    opt = parser.parse_args()
-    print(opt)
+def main():
 
     cuda = torch.cuda.is_available()
 
@@ -100,13 +62,6 @@ def main():
 
     Tensor = torch.cuda.FloatTensor if cuda else torch.Tensor
 
-    dataloader = DataLoader(
-        ImageDataset("data/%s" % opt.dataset_name, hr_shape=hr_shape),
-        batch_size=opt.batch_size,
-        shuffle=True,
-        num_workers=opt.n_cpu,
-    )
-
     # ----------
     #  Training
     # ----------
@@ -139,7 +94,8 @@ def main():
             # Content loss
             gen_features = feature_extractor(gen_hr)
             real_features = feature_extractor(imgs_hr)
-            loss_content = criterion_content(gen_features, real_features.detach())
+            loss_content = criterion_content(
+                gen_features, real_features.detach())
 
             # Total loss
             loss_G = loss_content + 1e-3 * loss_GAN
@@ -180,14 +136,66 @@ def main():
                 imgs_lr = make_grid(imgs_lr, nrow=1, normalize=True)
                 img_grid = torch.cat((imgs_lr, gen_hr), -1)
                 save_image(img_grid, "images/%d.png" %
-                        batches_done, normalize=False)
+                           batches_done, normalize=False)
 
         if opt.checkpoint_interval != -1 and epoch % opt.checkpoint_interval == 0:
             # Save model checkpoints
             torch.save(generator.state_dict(),
-                    "saved_models/generator_%d.pth" % epoch)
+                       "saved_models/generator_%d.pth" % epoch)
             torch.save(discriminator.state_dict(),
-                    "saved_models/discriminator_%d.pth" % epoch)
+                       "saved_models/discriminator_%d.pth" % epoch)
+
+
+def makedir():
+    os.makedirs("images", exist_ok=True)
+    os.makedirs("saved_models", exist_ok=True)
+
+
+def defineparm():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--epoch", type=int, default=0,
+                        help="epoch to start training from")
+    parser.add_argument("--n_epochs", type=int, default=300,
+                        help="number of epochs of training")
+    parser.add_argument("--dataset_name", type=str,
+                        default="img_align_celeba", help="name of the dataset")
+    parser.add_argument("--batch_size", type=int, default=2,
+                        help="size of the batches")
+    parser.add_argument("--lr", type=float, default=0.0002,
+                        help="adam: learning rate")
+    parser.add_argument("--b1", type=float, default=0.5,
+                        help="adam: decay of first order momentum of gradient")
+    parser.add_argument("--b2", type=float, default=0.999,
+                        help="adam: decay of first order momentum of gradient")
+    parser.add_argument("--decay_epoch", type=int, default=100,
+                        help="epoch from which to start lr decay")
+    parser.add_argument("--n_cpu", type=int, default=6,
+                        help="number of cpu threads to use during batch generation")
+    parser.add_argument("--hr_height", type=int, default=256,
+                        help="high res. image height")
+    parser.add_argument("--hr_width", type=int, default=256,
+                        help="high res. image width")
+    parser.add_argument("--channels", type=int, default=3,
+                        help="number of image channels")
+    parser.add_argument("--sample_interval", type=int, default=100,
+                        help="interval between saving image samples")
+    parser.add_argument("--checkpoint_interval", type=int,
+                        default=-1, help="interval between model checkpoints")
+    opt = parser.parse_args()
+    print(opt)
+
+
+def dataload():
+    dataloader = DataLoader(
+        ImageDataset("data/%s" % opt.dataset_name, hr_shape=hr_shape),
+        batch_size=opt.batch_size,
+        shuffle=True,
+        num_workers=opt.n_cpu,
+    )
+
 
 if __name__ == '__main__':
+    defineparm()
+    makedir()
+    dataload()
     main()
