@@ -168,7 +168,7 @@ def main():
             # --------------
 
             sys.stdout.write(
-                "[Epoch %d/%d] [Batch %d/%d] [D loss: %f] [G loss: %f]"
+                "[Epoch %d/%d] [Batch %d/%d] [D loss: %f] [G loss: %f]\n"
                 % (epoch, opt.n_epochs, i, len(dataloader), loss_D.item(), loss_G.item())
             )
 
