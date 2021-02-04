@@ -165,7 +165,7 @@ def defineparm():
                         help="number of epochs of training")
     parser.add_argument("--dataset_name", type=str,
                         default="img_align_celeba", help="name of the dataset")
-    parser.add_argument("--batch_size", type=int, default=2,
+    parser.add_argument("--batch_size", type=int, default=1,
                         help="size of the batches")
     parser.add_argument("--lr", type=float, default=0.0002,
                         help="adam: learning rate")
@@ -183,7 +183,7 @@ def defineparm():
                         help="high res. image width")
     parser.add_argument("--channels", type=int, default=3,
                         help="number of image channels")
-    parser.add_argument("--sample_interval", type=int, default=100,
+    parser.add_argument("--sample_interval", type=int, default=1000,
                         help="interval between saving image samples")
     parser.add_argument("--checkpoint_interval", type=int,
                         default=-1, help="interval between model checkpoints")
